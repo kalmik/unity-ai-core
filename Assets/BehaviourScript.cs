@@ -8,6 +8,8 @@ public class BehaviourScript : MonoBehaviour {
 	// Use this for initialization
 	Fis fis;
 	Rigidbody phy;
+
+	public GameObject[] motors;
 	public float droneForce;
 	void Start () {
 		fis = new Fis("Assets/b7matlab.txt");
@@ -33,7 +35,13 @@ public class BehaviourScript : MonoBehaviour {
 
 			float[] r = fis.Eval(new float[2] {E, ED});
 
-			phy.AddForce(Vector3.up * r[0] * droneForce, ForceMode.Acceleration);
+			float[] aa = new float[4] { r[0], r[0], r[0]*0.9f, r[0]*0.9f};
+
+			Vector3 up;
+			for(int i = 0; i < motors.Length; i++) {
+				up = motors[i].transform.up;
+				motors[i].GetComponent<Rigidbody>().velocity = up * aa[i] * droneForce;
+			}
 		}
 	}
 	
