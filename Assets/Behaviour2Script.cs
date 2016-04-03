@@ -3,14 +3,15 @@ using System.Collections;
 using System.Linq;
 using Fuzzy;
 
-public class BehaviourScript : MonoBehaviour {
+public class Behaviour2Script : MonoBehaviour {
 
 	// Use this for initialization
 	Fis fis;
 	Rigidbody phy;
+	public Rigidbody body;
 
-	public GameObject[] motors;
-	public float droneForce;
+
+	public float force;
 	void Start () {
 		fis = new Fis("Assets/b7matlab.txt");
 		phy = GetComponent<Rigidbody>();
@@ -23,9 +24,9 @@ public class BehaviourScript : MonoBehaviour {
 		float E_0  = 0;
 		float ED = 0;
 		while(true) {
-			yield return new WaitForSeconds(0);
+			yield return new WaitForSeconds(0.1f);
 			E_0 = E;
-			E = 0 - transform.position.y;
+			E = 0 - transform.position.x;
 			ED = E - E_0;
 
 			if(E > 1) E = 1;
@@ -35,14 +36,8 @@ public class BehaviourScript : MonoBehaviour {
 
 			float[] r = fis.Eval(new float[2] {E, ED});
 
-			float[] aa = new float[4] { r[0], r[0], r[0], r[0]};
+			body.AddForce(body.transform.right*r[0]*force, ForceMode.Impulse);
 
-			Vector3 up;
-			for(int i = 0; i < motors.Length; i++) {
-				up = motors[i].transform.up;
-				motors[i].GetComponent<Rigidbody>().velocity = up * aa[i] * droneForce;
-				//motors[i].GetComponent<Rigidbody>().AddForce(up * aa[i] * droneForce, ForceMode.VelocityChange);
-			}
 		}
 	}
 	
